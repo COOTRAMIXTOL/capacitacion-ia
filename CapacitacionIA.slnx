@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ConsolaAzureOpenAI.Tests/ConsolaAzureOpenAI.Tests.csproj" />
+  <Project Path="ConsolaAzureOpenAI/ConsolaAzureOpenAI.csproj" />
+</Solution>
