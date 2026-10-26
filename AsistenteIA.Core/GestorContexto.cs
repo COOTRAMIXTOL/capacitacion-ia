@@ -1,8 +1,10 @@
-﻿using OpenAI.Chat;
+using OpenAI.Chat;
+
+namespace AsistenteIA.Core;
 
 /// <summary>
 /// Decide qué parte del historial se envía al modelo en cada llamada.
-/// Se separó de Program.cs para poder probarlo sin llamar a Azure OpenAI.
+/// Vive en la biblioteca compartida para que la consola y la API usen la misma regla.
 /// </summary>
 public static class GestorContexto
 {

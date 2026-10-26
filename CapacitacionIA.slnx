@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="AsistenteIA.Api/AsistenteIA.Api.csproj" />
+  <Project Path="AsistenteIA.Core/AsistenteIA.Core.csproj" />
   <Project Path="ConsolaAzureOpenAI.Tests/ConsolaAzureOpenAI.Tests.csproj" />
   <Project Path="ConsolaAzureOpenAI/ConsolaAzureOpenAI.csproj" />
 </Solution>
