@@ -21,4 +21,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AsistenteIA.Core\AsistenteIA.Core.csproj" />
+  </ItemGroup>
+
 </Project>

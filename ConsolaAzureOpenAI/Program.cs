@@ -1,7 +1,8 @@
-﻿using System.ClientModel;
+using System.ClientModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using AsistenteIA.Core;
 using Azure.AI.OpenAI;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,7 @@ var cultura = new CultureInfo("es-CO");
 string fechaHoy = DateTime.Now.ToString("dddd d 'de' MMMM 'de' yyyy", cultura);
 
 // Historial COMPLETO de la conversación (útil para auditoría o para mostrar al usuario).
-// Al modelo NO se le envía completo: se le envía una ventana (ver ConstruirContexto).
+// Al modelo NO se le envía completo: se le envía una ventana (ver GestorContexto en AsistenteIA.Core).
 var historial = new List<ChatMessage>
 {
     new SystemChatMessage($"{promptSistema}\nFecha actual: {fechaHoy}.")
@@ -162,13 +163,4 @@ while (true)
         Console.WriteLine($"Error de permisos ({ex.Status}):\n{ex.Message}\n");
         break;
     }
-}
-
-class OpcionesIA
-{
-    public string Endpoint { get; init; } = "";
-    public string Deployment { get; init; } = "";
-    public float Temperature { get; init; } = 0.2f;
-    public int MaxOutputTokens { get; init; } = 300;
-    public int MaxTurnosHistorial { get; init; } = 3;
 }

@@ -1,4 +1,5 @@
-﻿using OpenAI.Chat;
+using AsistenteIA.Core;
+using OpenAI.Chat;
 
 namespace ConsolaAzureOpenAI.Tests;
 

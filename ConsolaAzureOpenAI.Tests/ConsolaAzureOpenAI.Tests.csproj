@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConsolaAzureOpenAI\ConsolaAzureOpenAI.csproj" />
+    <ProjectReference Include="..\AsistenteIA.Core\AsistenteIA.Core.csproj" />
   </ItemGroup>
 
 </Project>
