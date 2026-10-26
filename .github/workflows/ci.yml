@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Descargar el código
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Instalar .NET 10
         uses: actions/setup-dotnet@v5
