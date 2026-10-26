@@ -1,0 +1,41 @@
+name: CI
+
+# Se ejecuta en cada pull request y en cada push a las ramas principales
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  build-test:
+    name: Compilar y probar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v5
+
+      - name: Instalar .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restaurar dependencias
+        run: dotnet restore
+
+      - name: Compilar
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Ejecutar pruebas unitarias
+        run: >
+          dotnet test --no-build --configuration Release
+          --logger "trx;LogFileName=resultados.trx"
+          --results-directory ./resultados-pruebas
+
+      - name: Guardar resultados de las pruebas
+        if: always()   # se guardan aunque las pruebas fallen, para poder revisarlas
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-pruebas
+          path: ./resultados-pruebas
