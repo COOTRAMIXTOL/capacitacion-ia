@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # Paquetes NuGet del proyecto (Azure.AI.OpenAI, Azure.Identity, xUnit, etc.)
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "America/Bogota"
+    target-branch: "develop"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    groups:
+      # Agrupa las actualizaciones menores y de parche en un solo PR
+      menores-y-parches:
+        update-types: ["minor", "patch"]
+
+  # Acciones usadas en los flujos de GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "America/Bogota"
+    target-branch: "develop"
+    commit-message:
+      prefix: "ci"
