@@ -7,6 +7,15 @@ on:
   push:
     branches: [main, develop]
 
+# Mínimo privilegio: el flujo solo necesita leer el código
+permissions:
+  contents: read
+
+# Si llega un nuevo push a la misma rama o PR, se cancela la ejecución anterior
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-test:
     name: Compilar y probar
@@ -24,18 +33,51 @@ jobs:
       - name: Restaurar dependencias
         run: dotnet restore
 
-      - name: Compilar
-        run: dotnet build --no-restore --configuration Release
+      # Puerta de calidad 1: el código debe respetar el formato del proyecto
+      - name: Verificar formato del código
+        run: dotnet format --verify-no-changes --no-restore
 
-      - name: Ejecutar pruebas unitarias
+      # Puerta de calidad 2: cualquier advertencia del compilador se trata como error
+      - name: Compilar (advertencias como errores)
+        run: dotnet build --no-restore --configuration Release -warnaserror
+
+      # Puerta de calidad 3: las 13 pruebas deben pasar, y se mide la cobertura
+      - name: Ejecutar pruebas unitarias con cobertura
         run: >
           dotnet test --no-build --configuration Release
           --logger "trx;LogFileName=resultados.trx"
           --results-directory ./resultados-pruebas
+          --collect:"XPlat Code Coverage"
 
-      - name: Guardar resultados de las pruebas
-        if: always()   # se guardan aunque las pruebas fallen, para poder revisarlas
+      - name: Resumen de cobertura
+        if: always()
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: './resultados-pruebas/**/coverage.cobertura.xml'
+          targetdir: './reporte-cobertura'
+          reporttypes: 'MarkdownSummaryGithub;HtmlInline'
+
+      - name: Publicar resumen en la ejecución
+        if: always()
+        run: |
+          if [ -f ./reporte-cobertura/SummaryGithub.md ]; then
+            cat ./reporte-cobertura/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Puerta de calidad 4: ningún paquete NuGet con vulnerabilidades conocidas
+      - name: Revisar paquetes vulnerables
+        run: |
+          dotnet list package --vulnerable --include-transitive | tee vulnerables.txt
+          if grep -q "has the following vulnerable packages" vulnerables.txt; then
+            echo "::error::Se encontraron paquetes con vulnerabilidades conocidas."
+            exit 1
+          fi
+
+      - name: Guardar resultados de pruebas y cobertura
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: resultados-pruebas
-          path: ./resultados-pruebas
+          path: |
+            ./resultados-pruebas
+            ./reporte-cobertura
